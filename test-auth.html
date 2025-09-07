@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Clerk Auth</title>
+    <script src="https://unpkg.com/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+</head>
+<body>
+    <h1>Test Clerk Authentication</h1>
+    <button id="sign-in-btn">Sign In</button>
+    <div id="user-info" style="display: none;">
+        <p>User signed in!</p>
+        <div id="user-button"></div>
+    </div>
+
+    <script>
+        const CLERK_PUBLISHABLE_KEY = 'pk_test_YWR2YW5jZWQtcGVnYXN1cy00LmNsZXJrLmFjY291bnRzLmRldiQ';
+        
+        let clerk;
+
+        async function initClerk() {
+            try {
+                console.log('Initializing Clerk...');
+                clerk = new window.Clerk(CLERK_PUBLISHABLE_KEY);
+                await clerk.load();
+                console.log('Clerk loaded successfully');
+                
+                if (clerk.user) {
+                    showSignedIn();
+                } else {
+                    showSignedOut();
+                }
+            } catch (error) {
+                console.error('Clerk initialization failed:', error);
+            }
+        }
+
+        function showSignedIn() {
+            document.getElementById('sign-in-btn').style.display = 'none';
+            document.getElementById('user-info').style.display = 'block';
+            
+            if (clerk.user) {
+                clerk.mountUserButton(document.getElementById('user-button'));
+            }
+        }
+
+        function showSignedOut() {
+            document.getElementById('sign-in-btn').style.display = 'block';
+            document.getElementById('user-info').style.display = 'none';
+        }
+
+        function handleSignIn() {
+            console.log('Sign in clicked');
+            if (clerk) {
+                clerk.openSignIn();
+            } else {
+                console.error('Clerk not initialized');
+            }
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', function() {
+            console.log('Page loaded');
+            document.getElementById('sign-in-btn').addEventListener('click', handleSignIn);
+            initClerk();
+        });
+    </script>
+</body>
+</html>
